@@ -1,7 +1,7 @@
 
 (ns data-audit.check
     (:require [data-audit.patterns :as patterns]
-              [fruits.regex.api :as regex]))
+              [fruits.regex.api    :as regex]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
