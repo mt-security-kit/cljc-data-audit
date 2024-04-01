@@ -2,14 +2,15 @@
 (ns data-audit.generate
     (:require [fruits.loop.api   :refer [reduce-range]]
               [fruits.math.api   :as math]
-              [fruits.random.api :as random]))
+              [fruits.random.api :as random]
+              [data-audit.config :as config]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
 
 (defn generate-password
   ; @description
-  ; Returns a randomly generated password containing uppercase letter(s), lowercase letter(s), special character(s), and digit(s).
+  ; Returns a randomly generated password containing at least one uppercase letter, lowercase letter, special character, and decimal digit.
   ;
   ; @param (integer)(opt) length
   ; Default: 8
@@ -21,9 +22,9 @@
   ; "Yi4_"
   ;
   ; @usage
-  ; (generate-password 5)
+  ; (generate-password 8)
   ; =>
-  ; "YQi4_"
+  ; "AQga12*?"
   ;
   ; @return (string)
   ([]
@@ -31,31 +32,32 @@
 
   ([length]
    (let [length (max 4 length)]
-        (letfn [(set-f  [from to]    (map char (range (int from) (inc (int to)))))
-                (part-f [set length] (reduce-range (fn [%1 _] (str %1 (rand-nth set))) nil length))
-                (rem-f  [pos]        (if (<= pos (rem length 4)) 1 0))]
-               (let [lower-chars (set-f \a \z)
-                     upper-chars (set-f \A \Z)
-                     digits      (set-f \0 \9)
-                     specials    [\.\-\_\!\?\#\*]]
-                    (str (part-f upper-chars (+ (math/floor (/ length 4)) (rem-f 1)))
-                         (part-f lower-chars (+ (math/floor (/ length 4)) (rem-f 2)))
-                         (part-f digits      (+ (math/floor (/ length 4)) (rem-f 3)))
-                         (part-f specials    (+ (math/floor (/ length 4)) (rem-f 4)))))))))
+        (letfn [(f0 [set length] (reduce-range (fn [%1 _] (str %1 (rand-nth set))) nil length))
+                (f1 [pos]        (if (<= pos (rem length 4)) 1 0))]
+               (let [lowercase-set "abcdefghijklmnopqrstuvxyz"
+                     uppercase-set "ABCDEFGHIJKLMNOPQRSTUVXYZ"
+                     numeric-set   "0123456789"]
+                    (str (f0 uppercase-set                      (+ (math/floor (/ length 4)) (f1 1)))
+                         (f0 lowercase-set                      (+ (math/floor (/ length 4)) (f1 2)))
+                         (f0 numeric-set                        (+ (math/floor (/ length 4)) (f1 3)))
+                         (f0 config/PASSWORD-SPECIAL-CHARACTERS (+ (math/floor (/ length 4)) (f1 4)))))))))
 
 (defn generate-pin-code
+  ; @description
+  ; Returns a randomly generated PIN code.
+  ;
   ; @param (integer)(opt) length
   ; Default: 4
   ;
   ; @usage
   ; (generate-pin-code)
   ; =>
-  ; "0420"
+  ; "1234"
   ;
   ; @usage
   ; (generate-pin-code 6)
   ; =>
-  ; "042069"
+  ; "123456"
   ;
   ; @return (string)
   ([]
@@ -65,18 +67,21 @@
    (-> length random/generate-integer str)))
 
 (defn generate-security-code
+  ; @description
+  ; Returns a randomly generated security code.
+  ;
   ; @param (integer)(opt) length
   ; Default: 6
   ;
   ; @usage
   ; (generate-security-code)
   ; =>
-  ; "042069"
+  ; "123456"
   ;
   ; @usage
   ; (generate-security-code 8)
   ; =>
-  ; "04206900"
+  ; "12345678"
   ;
   ; @return (string)
   ([]
