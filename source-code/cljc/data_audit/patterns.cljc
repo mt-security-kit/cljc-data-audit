@@ -173,8 +173,11 @@
   ;   ... it contains at least one lowercase latin letter,
   ;   ... it contains at least one uppercase latin letter,
   ;   ... it contains at least one decimal digit,
-  ;   ... it contains at least one special character,
+  ;   ... it contains at least one special character (REMOVED),
   ;   ... it contains only latin letters, latin accented letters, decimal digits, and allowed special characters.
+  ;
+  ; @note
+  ; Requiring special characters has been removed, due to Google Chrome's behaviour of not including any special characters in autosuggested passwords.
   ;
   ; @param (map)(opt) options
   ; {:max (integer)(opt)
@@ -196,8 +199,9 @@
 
   ([{:keys [max min specials] :or {max 32 min 8 specials config/PASSWORD-SPECIAL-CHARACTERS}}]
    (let [specials (string/escape-characters specials)]
-        (re-pattern (str "^(?=.*[a-ÿ])(?=.*[A-Ÿ])(?=.*[0-9])(?=.*["specials"])[a-ÿA-Ÿ0-9"specials"]{"min","max"}$")))))
-
+        ;(re-pattern (str "^(?=.*[a-ÿ])(?=.*[A-Ÿ])(?=.*[0-9])(?=.*["specials"])[a-ÿA-Ÿ0-9"specials"]{"min","max"}$"))
+        (re-pattern (str "^(?=.*[a-ÿ])(?=.*[A-Ÿ])(?=.*[0-9])[a-ÿA-Ÿ0-9]{"min","max"}$")))))
+        
 (defn pin-code-pattern
   ; @description
   ; - Returns a regex pattern that matches valid PIN codes.

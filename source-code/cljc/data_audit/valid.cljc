@@ -188,8 +188,11 @@
   ;   ... it contains at least one lowercase latin letter,
   ;   ... it contains at least one uppercase latin letter,
   ;   ... it contains at least one decimal digit,
-  ;   ... it contains at least one special character,
+  ;   ... it contains at least one special character (REMOVED),
   ;   ... it contains only latin letters, latin accented letters, decimal digits, and allowed special characters.
+  ;
+  ; @note
+  ; Requiring special characters has been removed, due to Google Chrome's behaviour of not including any special characters in autosuggested passwords.
   ;
   ; @param (*) n
   ; @param (map)(opt) options
